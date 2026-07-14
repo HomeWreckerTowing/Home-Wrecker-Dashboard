@@ -692,11 +692,12 @@ function getStatusClass(status) {
 
 function renderBusinessInfo() {
   document.getElementById('brandName').textContent = settings.name;
-  document.getElementById('brandMeta').innerHTML = `${settings.address}<br>${settings.phone}<br>${settings.email}`;
+  document.getElementById('brandMeta').innerHTML =
+    `${escapeHtml(settings.address)}<br>${escapeHtml(settings.phone)}<br>${escapeHtml(settings.email)}`;
   document.getElementById('dashboardBusinessInfo').innerHTML =
-    `${settings.name}<br>${settings.address}<br>${settings.phone}<br>${settings.email}<br>${settings.domain}`;
+    `${escapeHtml(settings.name)}<br>${escapeHtml(settings.address)}<br>${escapeHtml(settings.phone)}<br>${escapeHtml(settings.email)}<br>${escapeHtml(settings.domain)}`;
   document.getElementById('printBusinessInfo').innerHTML =
-    `${settings.name}<br>${settings.address}<br>${settings.phone} | ${settings.email}`;
+    `${escapeHtml(settings.name)}<br>${escapeHtml(settings.address)}<br>${escapeHtml(settings.phone)} | ${escapeHtml(settings.email)}`;
 
   const settingsForm = document.getElementById('settingsForm');
   settingsForm.name.value = settings.name;
@@ -721,10 +722,10 @@ function renderDashboard() {
     ? recent.map((job) => `
       <div class="list-item">
         <div>
-          <strong>${job.jobNumber}</strong>
-          <div class="meta">${formatDateTime(job.towDateTime)} • ${job.customer.name || 'No name'} • ${job.vehicleDescription || 'No vehicle'}</div>
+          <strong>${escapeHtml(job.jobNumber)}</strong>
+          <div class="meta">${escapeHtml(formatDateTime(job.towDateTime))} • ${escapeHtml(job.customer.name || 'No name')} • ${escapeHtml(job.vehicleDescription || 'No vehicle')}</div>
         </div>
-        <div><span class="pill ${getStatusClass(job.status)}">${job.status}</span></div>
+        <div><span class="pill ${getStatusClass(job.status)}">${escapeHtml(job.status)}</span></div>
         <div><button class="secondary" onclick="openJobFromDashboard('${job.id}')">Open</button></div>
       </div>
     `).join('')
@@ -754,12 +755,12 @@ function renderJobs(search = '') {
         .map((job) => `
       <div class="list-item">
         <div>
-          <strong>${job.jobNumber}</strong>
-          <div class="meta">${formatDateTime(job.towDateTime)} • ${job.customer.name || 'No customer'} • ${job.vehicleDescription || 'No vehicle'}</div>
-          <div class="meta">Type: ${job.jobType}</div>
+          <strong>${escapeHtml(job.jobNumber)}</strong>
+          <div class="meta">${escapeHtml(formatDateTime(job.towDateTime))} • ${escapeHtml(job.customer.name || 'No customer')} • ${escapeHtml(job.vehicleDescription || 'No vehicle')}</div>
+          <div class="meta">Type: ${escapeHtml(job.jobType)}</div>
         </div>
         <div>
-          <span class="pill ${getStatusClass(job.status)}">${job.status}</span>
+          <span class="pill ${getStatusClass(job.status)}">${escapeHtml(job.status)}</span>
           <div style="margin-top:8px;">
             <select onchange="updateJobStatus('${job.id}', this.value)">
               <option ${job.status === 'Active' ? 'selected' : ''}>Active</option>
@@ -785,20 +786,20 @@ function renderJobDetails(job) {
 
   selectedJobId = job.id;
   el.innerHTML = `
-    <strong>${job.jobNumber}</strong><br>
-    <span class="pill ${getStatusClass(job.status)}">${job.status}</span><br><br>
-    <strong>Type:</strong> ${job.jobType}<br>
-    <strong>Tow Date & Time:</strong> ${formatDateTime(job.towDateTime)}<br>
-    <strong>Pickup:</strong> ${job.pickupLocation}<br>
-    <strong>Drop-off:</strong> ${job.dropoffLocation}<br><br>
-    <strong>Customer:</strong> ${job.customer.name || ''}<br>
-    <strong>Phone:</strong> ${job.customer.phone || ''}<br>
-    <strong>Email:</strong> ${job.customer.email || ''}<br>
-    <strong>Driver's License:</strong> ${job.customer.license || ''}<br><br>
-    <strong>Vehicle:</strong> ${job.vehicleDescription || ''}<br>
-    <strong>VIN:</strong> ${job.vehicle.vin || ''}<br>
-    <strong>Plate:</strong> ${job.vehicle.plate || ''} ${job.vehicle.state || ''}<br><br>
-    <strong>Notes:</strong> ${job.notes || 'N/A'}
+    <strong>${escapeHtml(job.jobNumber)}</strong><br>
+    <span class="pill ${getStatusClass(job.status)}">${escapeHtml(job.status)}</span><br><br>
+    <strong>Type:</strong> ${escapeHtml(job.jobType)}<br>
+    <strong>Tow Date & Time:</strong> ${escapeHtml(formatDateTime(job.towDateTime))}<br>
+    <strong>Pickup:</strong> ${escapeHtml(job.pickupLocation)}<br>
+    <strong>Drop-off:</strong> ${escapeHtml(job.dropoffLocation)}<br><br>
+    <strong>Customer:</strong> ${escapeHtml(job.customer.name || '')}<br>
+    <strong>Phone:</strong> ${escapeHtml(job.customer.phone || '')}<br>
+    <strong>Email:</strong> ${escapeHtml(job.customer.email || '')}<br>
+    <strong>Driver's License:</strong> ${escapeHtml(job.customer.license || '')}<br><br>
+    <strong>Vehicle:</strong> ${escapeHtml(job.vehicleDescription || '')}<br>
+    <strong>VIN:</strong> ${escapeHtml(job.vehicle.vin || '')}<br>
+    <strong>Plate:</strong> ${escapeHtml(job.vehicle.plate || '')} ${escapeHtml(job.vehicle.state || '')}<br><br>
+    <strong>Notes:</strong> ${escapeHtml(job.notes || 'N/A')}
   `;
 }
 
@@ -827,8 +828,8 @@ function renderCustomers() {
     ? customers.map((customer, idx) => `
       <div class="list-item">
         <div>
-          <strong>${customer.name}</strong>
-          <div class="meta">${customer.phone} • ${customer.email}</div>
+          <strong>${escapeHtml(customer.name)}</strong>
+          <div class="meta">${escapeHtml(customer.phone)} • ${escapeHtml(customer.email)}</div>
           <div class="meta">${customer.jobs.length} job(s)</div>
         </div>
         <div></div>
@@ -849,7 +850,7 @@ function openCustomerJobs(index) {
   }
   pane.innerHTML = customer.jobs
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .map((job) => `<div style="margin-bottom:10px;"><strong>${job.jobNumber}</strong><br>${formatDateTime(job.towDateTime)}<br>${job.vehicleDescription || 'No vehicle'}<br><span class="pill ${getStatusClass(job.status)}">${job.status}</span></div>`)
+    .map((job) => `<div style="margin-bottom:10px;"><strong>${escapeHtml(job.jobNumber)}</strong><br>${escapeHtml(formatDateTime(job.towDateTime))}<br>${escapeHtml(job.vehicleDescription || 'No vehicle')}<br><span class="pill ${getStatusClass(job.status)}">${escapeHtml(job.status)}</span></div>`)
     .join('');
 }
 
@@ -857,9 +858,9 @@ function renderFormCards() {
   const cards = document.getElementById('formCards');
   cards.innerHTML = FORM_DEFS.map((form) => `
     <div class="card form-card" onclick="openFormEditor('${form.id}')">
-      <h3>📄 ${form.id}. ${form.title}</h3>
-      <p>${form.description}</p>
-      <small>${form.fileName}</small>
+      <h3>📄 ${escapeHtml(form.id)}. ${escapeHtml(form.title)}</h3>
+      <p>${escapeHtml(form.description)}</p>
+      <small>${escapeHtml(form.fileName)}</small>
     </div>
   `).join('');
 
@@ -872,7 +873,7 @@ function renderFormLinkedJobs(selected = '') {
   select.innerHTML = '<option value="">Not Linked</option>' +
     jobs
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .map((job) => `<option value="${job.id}" ${selected === job.id ? 'selected' : ''}>${job.jobNumber} - ${job.customer.name || 'No customer'}</option>`)
+      .map((job) => `<option value="${job.id}" ${selected === job.id ? 'selected' : ''}>${escapeHtml(job.jobNumber)} - ${escapeHtml(job.customer.name || 'No customer')}</option>`)
       .join('');
 }
 
@@ -914,7 +915,7 @@ function renderPrintPreview(formDef) {
   const linkedJob = jobs.find((j) => j.id === linkedJobId);
   document.getElementById('printFormTitle').textContent = formDef.title;
   document.getElementById('printJobInfo').innerHTML = linkedJob
-    ? `Linked Job: ${linkedJob.jobNumber} • ${linkedJob.customer.name || 'No customer'} • ${formatDateTime(linkedJob.towDateTime)}`
+    ? `Linked Job: ${escapeHtml(linkedJob.jobNumber)} • ${escapeHtml(linkedJob.customer.name || 'No customer')} • ${escapeHtml(formatDateTime(linkedJob.towDateTime))}`
     : 'Linked Job: Not linked';
 
   const printFields = document.getElementById('printFields');
@@ -967,9 +968,9 @@ function renderPdfFiles() {
         .map((entry) => `
       <div class="list-item">
         <div>
-          <strong>${entry.formLabel}</strong>
-          <div class="meta">Saved: ${formatDateTime(entry.savedAt)}</div>
-          <div class="meta">Job: ${entry.jobNumber || 'Not linked'}</div>
+          <strong>${escapeHtml(entry.formLabel)}</strong>
+          <div class="meta">Saved: ${escapeHtml(formatDateTime(entry.savedAt))}</div>
+          <div class="meta">Job: ${escapeHtml(entry.jobNumber || 'Not linked')}</div>
         </div>
         <div></div>
         <div><button class="secondary" onclick="reopenSavedForm('${entry.id}')">Reopen</button></div>
