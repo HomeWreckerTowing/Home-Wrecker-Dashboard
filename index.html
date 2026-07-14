@@ -685,7 +685,10 @@ function getNextJobNumber() {
   const currentYearNumbers = jobs
     .map((job) => job.jobNumber || '')
     .filter((num) => num.startsWith(yearPrefix))
-    .map((num) => Number(num.split('-')[2]))
+    .map((num) => {
+      const parts = num.split('-');
+      return parts.length === 3 ? Number(parts[2]) : NaN;
+    })
     .filter((n) => !Number.isNaN(n));
   const next = currentYearNumbers.reduce((max, n) => (n > max ? n : max), 0) + 1;
   return `${yearPrefix}${String(next).padStart(4, '0')}`;
@@ -1065,11 +1068,11 @@ function openJobFromDashboard(jobId) {
 
 function escapeHtml(str) {
   return String(str)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 function renderAll() {
@@ -1200,7 +1203,7 @@ function initEvents() {
     setTimeout(() => document.body.classList.remove('print-form'), 300);
   });
 
-  window.onafterprint = () => document.body.classList.remove('print-form');
+  window.addEventListener('afterprint', () => document.body.classList.remove('print-form'));
 
   document.getElementById('closeFormEditor').addEventListener('click', () => {
     document.getElementById('formEditorPanel').classList.add('hidden');
