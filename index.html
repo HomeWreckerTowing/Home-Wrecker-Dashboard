@@ -6,205 +6,1273 @@
 <title>Home Wrecker Towing Dashboard</title>
 <style>
 :root {
---bg: #f5f3ee;
---surface: #ffffff;
---surface-2: #ece8df;
---text: #22211d;
---muted: #6f6a61;
---border: #d7d2c7;
---primary: #0c6a6f;
---primary-dark: #094e52;
---success: #3c7a35;
---radius: 18px;
---shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --bg: #f5f3ee;
+  --surface: #ffffff;
+  --surface-2: #ece8df;
+  --text: #22211d;
+  --muted: #6f6a61;
+  --border: #d7d2c7;
+  --primary: #0c6a6f;
+  --primary-dark: #094e52;
+  --success: #3c7a35;
+  --warning: #bf7c18;
+  --danger: #ab3434;
+  --radius: 16px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-* {
-box-sizing: border-box;
-margin: 0;
-padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
 
-body {
-font-family: Arial, sans-serif;
-background: var(--bg);
-color: var(--text);
-}
-
-.app {
-display: grid;
-grid-template-columns: 260px 1fr;
-min-height: 100vh;
-}
-
-.sidebar {
-background: var(--surface);
-border-right: 1px solid var(--border);
-padding: 24px;
-}
-
-.brand {
-font-size: 24px;
-font-weight: bold;
-color: var(--primary);
-margin-bottom: 32px;
-line-height: 1.2;
-}
-
+.app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+.sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 24px; }
+.brand { font-size: 24px; font-weight: 700; color: var(--primary); margin-bottom: 8px; line-height: 1.2; }
+.brand-meta { color: var(--muted); font-size: 13px; line-height: 1.45; margin-bottom: 20px; }
 .nav a {
-display: block;
-text-decoration: none;
-color: var(--text);
-padding: 12px 14px;
-border-radius: 12px;
-margin-bottom: 8px;
-background: transparent;
+  display: block;
+  text-decoration: none;
+  color: var(--text);
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin-bottom: 8px;
 }
+.nav a:hover, .nav a.active { background: var(--surface-2); color: var(--primary-dark); }
 
-.nav a:hover,
-.nav a.active {
-background: var(--surface-2);
-color: var(--primary-dark);
-}
-
-.main {
-padding: 24px;
-}
-
+.main { padding: 24px; }
 .topbar {
-display: flex;
-justify-content: space-between;
-align-items: center;
-gap: 16px;
-margin-bottom: 24px;
-flex-wrap: wrap;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
+.topbar h1 { font-size: 28px; }
+.topbar p { color: var(--muted); margin-top: 6px; }
+.quick-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
-.topbar h1 {
-font-size: 30px;
+button, .btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 11px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
+button:hover, .btn:hover { background: var(--primary-dark); }
+button.secondary, .btn.secondary { background: #e7f2f2; color: var(--primary-dark); }
+button.secondary:hover, .btn.secondary:hover { background: #d8ecec; }
+button.danger { background: var(--danger); }
+button.ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
 
-.topbar p {
-color: var(--muted);
-margin-top: 6px;
-}
-
-.quick-btn {
-background: var(--primary);
-color: white;
-border: none;
-border-radius: 12px;
-padding: 12px 18px;
-font-size: 15px;
-cursor: pointer;
-}
-
-.quick-btn:hover {
-background: var(--primary-dark);
-}
-
-.grid {
-display: grid;
-grid-template-columns: repeat(2, minmax(0, 1fr));
-gap: 20px;
-}
-
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 .card {
-background: var(--surface);
-border: 1px solid var(--border);
-border-radius: var(--radius);
-box-shadow: var(--shadow);
-padding: 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px;
 }
+.card h2, .card h3 { margin-bottom: 8px; }
+.card p { color: var(--muted); line-height: 1.5; }
+.stat-number { font-size: 28px; color: var(--primary-dark); font-weight: 700; }
+.app-section { display: none; }
+.app-section.active { display: block; }
 
-.card h2 {
-font-size: 20px;
-margin-bottom: 10px;
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+label { display: block; margin-bottom: 6px; color: #3e3b35; font-size: 13px; font-weight: 600; }
+input, select, textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 14px;
+  background: #fff;
 }
+textarea { min-height: 90px; resize: vertical; }
 
-.card p {
-color: var(--muted);
-line-height: 1.6;
-margin-bottom: 14px;
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.form-grid .full { grid-column: 1 / -1; }
+
+.list { display: flex; flex-direction: column; gap: 10px; }
+.list-item {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1.3fr 1fr auto;
+  align-items: center;
 }
-
+.meta { color: var(--muted); font-size: 13px; line-height: 1.5; }
 .pill {
-display: inline-block;
-background: #e3f1ee;
-color: var(--success);
-padding: 7px 12px;
-border-radius: 999px;
-font-size: 14px;
-font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.pill.active { background: #e7f5ec; color: var(--success); }
+.pill.pending { background: #fff2df; color: var(--warning); }
+.pill.completed { background: #e5eef7; color: #2f5f9b; }
+
+.form-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.form-card { cursor: pointer; }
+.form-card h3 { font-size: 16px; margin-bottom: 6px; }
+.form-card small { color: var(--muted); }
+
+.muted { color: var(--muted); }
+.hidden { display: none !important; }
+.notice {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  background: #104447;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  z-index: 1000;
+}
+
+.printable-form {
+  margin-top: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+}
+.print-header h2 { margin-bottom: 4px; }
+.print-grid { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+.print-field { border-bottom: 1px solid #d8d8d8; padding: 6px 0; font-size: 13px; }
+.print-field strong { display: block; color: #444; font-size: 12px; }
+
+@media (max-width: 1100px) {
+  .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .form-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 900px) {
-.app {
-grid-template-columns: 1fr;
+  .app { grid-template-columns: 1fr; }
+  .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+  .grid, .form-grid { grid-template-columns: 1fr; }
+  .list-item { grid-template-columns: 1fr; }
+  .form-cards { grid-template-columns: 1fr; }
 }
 
-.sidebar {
-border-right: none;
-border-bottom: 1px solid var(--border);
-}
-
-.grid {
-grid-template-columns: 1fr;
-}
+@media print {
+  body * { visibility: hidden !important; }
+  body.print-form #form-print-view, body.print-form #form-print-view * { visibility: visible !important; }
+  body.print-form #form-print-view {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    border: none;
+    box-shadow: none;
+    margin: 0;
+  }
 }
 </style>
 </head>
 <body>
 <div class="app">
-<aside class="sidebar">
-<div class="brand">Home Wrecker<br>Towing</div>
+  <aside class="sidebar">
+    <div class="brand" id="brandName">Home Wrecker Towing LLC</div>
+    <div class="brand-meta" id="brandMeta"></div>
 
-<nav class="nav">
-<a href="#" class="active">Dashboard</a>
-<a href="#">Tow Jobs</a>
-<a href="#">Forms</a>
-<a href="#">Customers</a>
-<a href="#">PDF Files</a>
-<a href="#">Settings</a>
-</nav>
-</aside>
+    <nav class="nav">
+      <a href="#" class="active" data-section="dashboard">Dashboard</a>
+      <a href="#" data-section="tow-jobs">Tow Jobs</a>
+      <a href="#" data-section="forms">Forms</a>
+      <a href="#" data-section="customers">Customers</a>
+      <a href="#" data-section="pdf-files">PDF Files</a>
+      <a href="#" data-section="settings">Settings</a>
+    </nav>
+  </aside>
 
-<main class="main">
-<div class="topbar">
-<div>
-<h1>Operations Dashboard</h1>
-<p>Track jobs, open forms, and save paperwork faster.</p>
-</div>
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1 id="sectionTitle">Operations Dashboard</h1>
+        <p id="sectionSubtitle">Track jobs, complete forms, and keep records organized.</p>
+      </div>
+      <div class="quick-actions">
+        <button id="topNewTowBtn">+ New Tow Job</button>
+        <button class="secondary" id="topOpenFormsBtn">Open Forms</button>
+        <button class="secondary" id="topSearchJobsBtn">Search Jobs</button>
+      </div>
+    </div>
 
-<button class="quick-btn">+ New Tow Job</button>
-</div>
+    <section id="dashboard" class="app-section active stack">
+      <div class="grid-4">
+        <div class="card"><p class="muted">Total Jobs</p><div class="stat-number" id="statTotalJobs">0</div></div>
+        <div class="card"><p class="muted">Active Jobs</p><div class="stat-number" id="statActiveJobs">0</div></div>
+        <div class="card"><p class="muted">Forms Completed</p><div class="stat-number" id="statForms">0</div></div>
+        <div class="card"><p class="muted">Customers</p><div class="stat-number" id="statCustomers">0</div></div>
+      </div>
+      <div class="grid">
+        <div class="card stack">
+          <h2>Recent Jobs</h2>
+          <div id="recentJobs" class="list"></div>
+        </div>
+        <div class="card stack">
+          <h2>Business Contact</h2>
+          <div class="meta" id="dashboardBusinessInfo"></div>
+          <div class="row">
+            <button id="dashboardNewTow">+ New Tow Job</button>
+            <button class="secondary" id="dashboardOpenForms">Open Forms</button>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<section class="grid">
-<div class="card">
-<h2>Today's Jobs</h2>
-<p>See active calls, scheduled pickups, and completed work for the day.</p>
-<span class="pill">3 active jobs</span>
-</div>
+    <section id="tow-jobs" class="app-section stack">
+      <div class="card stack">
+        <div class="row">
+          <input id="jobSearch" type="text" placeholder="Search by job #, customer, phone, or vehicle" />
+          <button id="jobSearchClear" class="secondary">Clear</button>
+          <button id="openNewJobFormBtn">+ New Tow Job</button>
+        </div>
+      </div>
 
-<div class="card">
-<h2>Open Forms</h2>
-<p>Continue tow authorizations, release forms, and other unfinished paperwork.</p>
-<span class="pill">5 forms in progress</span>
-</div>
+      <div id="newJobPanel" class="card hidden stack">
+        <h2>New Tow Job</h2>
+        <form id="newJobForm" class="form-grid">
+          <div>
+            <label>Job Type</label>
+            <select name="jobType" required>
+              <option value="Consensual Tow">Consensual Tow</option>
+              <option value="Private Property Tow">Private Property Tow</option>
+              <option value="Police/Impound">Police/Impound</option>
+              <option value="Accident Recovery">Accident Recovery</option>
+            </select>
+          </div>
+          <div>
+            <label>Tow Date & Time</label>
+            <input type="datetime-local" name="towDateTime" required />
+          </div>
+          <div class="full">
+            <label>Pickup Location</label>
+            <input type="text" name="pickupLocation" required />
+          </div>
+          <div class="full">
+            <label>Drop-off / Storage Location</label>
+            <input type="text" name="dropoffLocation" required />
+          </div>
 
-<div class="card">
-<h2>Recent PDFs</h2>
-<p>Open saved paperwork, print copies, and keep job records organized.</p>
-<span class="pill">12 recent files</span>
-</div>
+          <div class="full"><h3>Customer Info</h3></div>
+          <div><label>Name</label><input type="text" name="customerName" required /></div>
+          <div><label>Phone</label><input type="tel" name="customerPhone" required /></div>
+          <div><label>Email</label><input type="email" name="customerEmail" /></div>
+          <div><label>Driver's License #</label><input type="text" name="customerLicense" /></div>
 
-<div class="card">
-<h2>Quick Actions</h2>
-<p>Start a new tow ticket, look up a customer, or prepare a PDF packet.</p>
-<span class="pill">Ready to use</span>
+          <div class="full"><h3>Vehicle Info</h3></div>
+          <div><label>Year</label><input type="text" name="vehicleYear" /></div>
+          <div><label>Make</label><input type="text" name="vehicleMake" /></div>
+          <div><label>Model</label><input type="text" name="vehicleModel" /></div>
+          <div><label>Color</label><input type="text" name="vehicleColor" /></div>
+          <div><label>VIN</label><input type="text" name="vehicleVin" /></div>
+          <div><label>License Plate</label><input type="text" name="vehiclePlate" /></div>
+          <div><label>State</label><input type="text" name="vehicleState" /></div>
+          <div>
+            <label>Status</label>
+            <select name="status">
+              <option value="Active">Active</option>
+              <option value="Completed">Completed</option>
+              <option value="Pending">Pending</option>
+            </select>
+          </div>
+          <div class="full">
+            <label>Notes / Special Instructions</label>
+            <textarea name="notes"></textarea>
+          </div>
+          <div class="full row">
+            <button type="submit">Save Job</button>
+            <button type="button" id="cancelNewJob" class="secondary">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="grid">
+        <div class="card stack">
+          <h2>Saved Tow Jobs</h2>
+          <div id="jobsList" class="list"></div>
+        </div>
+        <div class="card stack">
+          <h2>Job Details</h2>
+          <div id="jobDetails" class="meta">Select a tow job to view full details.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="forms" class="app-section stack">
+      <div class="card">
+        <h2>Form Library</h2>
+        <p class="muted">Open any form, link it to a job, auto-fill key details, save it, and print a clean copy.</p>
+      </div>
+      <div id="formCards" class="form-cards"></div>
+
+      <div id="formEditorPanel" class="card hidden stack">
+        <div class="row" style="justify-content: space-between; align-items: center;">
+          <h2 id="formEditorTitle">Form Editor</h2>
+          <button class="secondary" id="closeFormEditor">Close</button>
+        </div>
+        <div class="form-grid">
+          <div class="full">
+            <label>Link to Job</label>
+            <select id="formLinkedJob"></select>
+          </div>
+        </div>
+        <form id="dynamicFormFields" class="form-grid"></form>
+        <div class="row">
+          <button id="saveFormBtn">Save Form</button>
+          <button id="printFormBtn" class="secondary">Print / Save as PDF</button>
+        </div>
+        <div id="formSaveMessage" class="muted"></div>
+
+        <div id="form-print-view" class="printable-form">
+          <div class="print-header">
+            <h2 id="printFormTitle"></h2>
+            <div class="meta" id="printBusinessInfo"></div>
+            <div class="meta" id="printJobInfo"></div>
+          </div>
+          <div id="printFields" class="print-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="customers" class="app-section stack">
+      <div class="grid">
+        <div class="card stack">
+          <h2>Customers</h2>
+          <div id="customersList" class="list"></div>
+        </div>
+        <div class="card stack">
+          <h2>Customer Jobs</h2>
+          <div id="customerJobs" class="meta">Select a customer to view all associated jobs.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pdf-files" class="app-section stack">
+      <div class="card stack">
+        <h2>Saved Form Records</h2>
+        <div class="row">
+          <input id="pdfFilterJob" type="text" placeholder="Filter by Job Number" />
+          <select id="pdfFilterForm"><option value="">All Form Types</option></select>
+        </div>
+      </div>
+      <div class="card stack">
+        <div id="pdfFilesList" class="list"></div>
+      </div>
+    </section>
+
+    <section id="settings" class="app-section stack">
+      <div class="card stack">
+        <h2>Business Settings</h2>
+        <form id="settingsForm" class="form-grid">
+          <div class="full"><label>Business Name</label><input type="text" name="name" required /></div>
+          <div class="full"><label>Address</label><input type="text" name="address" required /></div>
+          <div><label>Phone</label><input type="text" name="phone" required /></div>
+          <div><label>Email</label><input type="email" name="email" required /></div>
+          <div><label>Domain</label><input type="text" name="domain" required /></div>
+          <div class="full row"><button type="submit">Save Settings</button></div>
+        </form>
+      </div>
+    </section>
+  </main>
 </div>
-</section>
-</main>
-</div>
+<div id="notice" class="notice hidden" role="status" aria-live="polite"></div>
+
+<script>
+const STORAGE_KEYS = {
+  jobs: 'hwt_jobs',
+  forms: 'hwt_saved_forms',
+  settings: 'hwt_settings'
+};
+const NOTICE_DISPLAY_DURATION = 2600;
+const PRINT_CLEANUP_DELAY = 300;
+
+const DEFAULT_SETTINGS = {
+  name: 'Home Wrecker Towing LLC',
+  address: '2850 Usina Road Extension, Saint Augustine, Florida 32084',
+  email: 'Sherry@homewreckertowing.org',
+  phone: '(386) 281-2416',
+  domain: 'homewreckertowing.org'
+};
+
+const FORM_DEFS = [
+  {
+    id: '01',
+    fileName: '01_Tow_Authorization_Vehicle_Condition_Report.pdf',
+    title: 'Tow Authorization & Vehicle Condition Report',
+    description: 'Capture owner authorization, vehicle condition, and tow details.',
+    fields: [
+      { name: 'jobNumber', label: 'Job Number', source: 'jobNumber' },
+      { name: 'towDate', label: 'Tow Date', type: 'date', source: 'towDate' },
+      { name: 'towTime', label: 'Tow Time', source: 'towTime' },
+      { name: 'ownerName', label: 'Owner/Customer Name', source: 'customer.name' },
+      { name: 'ownerPhone', label: 'Owner Phone', source: 'customer.phone' },
+      { name: 'pickupLocation', label: 'Pickup Location', source: 'pickupLocation' },
+      { name: 'dropoffLocation', label: 'Drop-off Location', source: 'dropoffLocation' },
+      { name: 'vehicleDescription', label: 'Vehicle (Year/Make/Model/Color)', source: 'vehicleDescription' },
+      { name: 'vin', label: 'VIN', source: 'vehicle.vin' },
+      { name: 'plate', label: 'License Plate', source: 'vehicle.plate' },
+      { name: 'plateState', label: 'Plate State', source: 'vehicle.state' },
+      { name: 'conditionNotes', label: 'Vehicle Condition Notes', type: 'textarea' },
+      { name: 'signatureName', label: 'Authorization Signature Name' }
+    ]
+  },
+  {
+    id: '02',
+    fileName: '02_Private_Property_Tow_Authorization_Agreement.pdf',
+    title: 'Private Property Tow Authorization Agreement',
+    description: 'Document authorization for private property removals.',
+    fields: [
+      { name: 'jobNumber', label: 'Job Number', source: 'jobNumber' },
+      { name: 'agreementDate', label: 'Date', type: 'date', source: 'towDate' },
+      { name: 'propertyName', label: 'Property Name' },
+      { name: 'propertyAddress', label: 'Property Address', source: 'pickupLocation' },
+      { name: 'requestingParty', label: 'Requesting Party' },
+      { name: 'requestingPhone', label: 'Requesting Phone', source: 'customer.phone' },
+      { name: 'vehicleDescription', label: 'Vehicle Description', source: 'vehicleDescription' },
+      { name: 'vin', label: 'VIN', source: 'vehicle.vin' },
+      { name: 'plate', label: 'Plate', source: 'vehicle.plate' },
+      { name: 'state', label: 'State', source: 'vehicle.state' },
+      { name: 'reasonForTow', label: 'Reason for Tow', type: 'textarea' },
+      { name: 'authorizedBy', label: 'Authorized By' }
+    ]
+  },
+  {
+    id: '03',
+    fileName: '03_Notice_of_Lien_Vehicle_Storage.pdf',
+    title: 'Notice of Lien & Vehicle Storage',
+    description: 'Track lien notice and storage details.',
+    fields: [
+      { name: 'jobNumber', label: 'Job Number', source: 'jobNumber' },
+      { name: 'noticeDate', label: 'Notice Date', type: 'date', source: 'towDate' },
+      { name: 'ownerName', label: 'Registered Owner Name', source: 'customer.name' },
+      { name: 'ownerAddress', label: 'Owner Address' },
+      { name: 'vehicleDescription', label: 'Vehicle Description', source: 'vehicleDescription' },
+      { name: 'vin', label: 'VIN', source: 'vehicle.vin' },
+      { name: 'plate', label: 'Plate', source: 'vehicle.plate' },
+      { name: 'storageLocation', label: 'Storage Location', source: 'dropoffLocation' },
+      { name: 'storageStart', label: 'Storage Start Date', type: 'date', source: 'towDate' },
+      { name: 'dailyRate', label: 'Daily Storage Rate' },
+      { name: 'lienAmount', label: 'Total Lien Amount' },
+      { name: 'notes', label: 'Notes', type: 'textarea' }
+    ]
+  },
+  {
+    id: '04',
+    fileName: '04_Release_of_Vehicle_Itemized_Receipt Final.pdf',
+    title: 'Release of Vehicle & Itemized Receipt',
+    description: 'Record vehicle release and itemized fees.',
+    fields: [
+      { name: 'jobNumber', label: 'Job Number', source: 'jobNumber' },
+      { name: 'releaseDate', label: 'Release Date', type: 'date' },
+      { name: 'releaseTo', label: 'Released To', source: 'customer.name' },
+      { name: 'customerPhone', label: 'Customer Phone', source: 'customer.phone' },
+      { name: 'vehicleDescription', label: 'Vehicle Description', source: 'vehicleDescription' },
+      { name: 'towFee', label: 'Tow Fee' },
+      { name: 'storageFee', label: 'Storage Fee' },
+      { name: 'adminFee', label: 'Administrative Fee' },
+      { name: 'otherFee', label: 'Other Fee' },
+      { name: 'totalPaid', label: 'Total Paid' },
+      { name: 'paymentMethod', label: 'Payment Method' },
+      { name: 'releaseBy', label: 'Released By' }
+    ]
+  },
+  {
+    id: '05',
+    fileName: '05_Class_A_Tow_Rate_Sheet Final.pdf',
+    title: 'Class A Tow Rate Sheet',
+    description: 'Quote Class A service rates and applicable charges.',
+    fields: [
+      { name: 'effectiveDate', label: 'Effective Date', type: 'date' },
+      { name: 'baseTowRate', label: 'Base Tow Rate' },
+      { name: 'hookupFee', label: 'Hook-up Fee' },
+      { name: 'mileageRate', label: 'Mileage Rate' },
+      { name: 'winchRate', label: 'Winch/Recovery Rate' },
+      { name: 'storageDailyRate', label: 'Storage Daily Rate' },
+      { name: 'afterHoursRate', label: 'After-hours Surcharge' },
+      { name: 'adminRate', label: 'Admin Fee' },
+      { name: 'companyRep', label: 'Company Representative' },
+      { name: 'notes', label: 'Notes', type: 'textarea' }
+    ]
+  },
+  {
+    id: '06',
+    fileName: '06_Consensual_Tow_Rate_Sheet Final.pdf',
+    title: 'Consensual Tow Rate Sheet',
+    description: 'Document rates for consensual towing services.',
+    fields: [
+      { name: 'effectiveDate', label: 'Effective Date', type: 'date' },
+      { name: 'localTowRate', label: 'Local Tow Rate' },
+      { name: 'longDistanceRate', label: 'Long Distance Rate' },
+      { name: 'dollyRate', label: 'Dolly Fee' },
+      { name: 'waitTimeRate', label: 'Wait Time Rate' },
+      { name: 'afterHoursRate', label: 'After-hours Fee' },
+      { name: 'fuelSurcharge', label: 'Fuel Surcharge' },
+      { name: 'companyRep', label: 'Company Representative' },
+      { name: 'notes', label: 'Notes', type: 'textarea' }
+    ]
+  },
+  {
+    id: '07',
+    fileName: '07_Consensual_Tow_Service_Record.pdf',
+    title: 'Consensual Tow Service Record',
+    description: 'Capture service details for consensual tow calls.',
+    fields: [
+      { name: 'jobNumber', label: 'Job Number', source: 'jobNumber' },
+      { name: 'serviceDate', label: 'Service Date', type: 'date', source: 'towDate' },
+      { name: 'customerName', label: 'Customer Name', source: 'customer.name' },
+      { name: 'customerPhone', label: 'Customer Phone', source: 'customer.phone' },
+      { name: 'pickupLocation', label: 'Pickup Location', source: 'pickupLocation' },
+      { name: 'dropoffLocation', label: 'Drop-off Location', source: 'dropoffLocation' },
+      { name: 'vehicleDescription', label: 'Vehicle Description', source: 'vehicleDescription' },
+      { name: 'serviceType', label: 'Service Type', source: 'jobType' },
+      { name: 'mileage', label: 'Mileage' },
+      { name: 'serviceFee', label: 'Service Fee' },
+      { name: 'driverName', label: 'Tow Operator' },
+      { name: 'serviceNotes', label: 'Service Notes', type: 'textarea' }
+    ]
+  },
+  {
+    id: '08',
+    fileName: '08_Daily_Trip_Sheet_Tow_Ticket_Log.pdf',
+    title: 'Daily Trip Sheet & Tow Ticket Log',
+    description: 'Log all tow tickets and trips completed in a day.',
+    fields: [
+      { name: 'logDate', label: 'Log Date', type: 'date', source: 'towDate' },
+      { name: 'jobNumber', label: 'Job Number', source: 'jobNumber' },
+      { name: 'driverName', label: 'Driver Name' },
+      { name: 'startMileage', label: 'Start Mileage' },
+      { name: 'endMileage', label: 'End Mileage' },
+      { name: 'ticketCount', label: 'Total Tickets' },
+      { name: 'fuelUsed', label: 'Fuel Used' },
+      { name: 'callsHandled', label: 'Calls Handled' },
+      { name: 'notes', label: 'Daily Notes', type: 'textarea' }
+    ]
+  },
+  {
+    id: '09',
+    fileName: '09_Personal_Property_Inventory_Form.pdf',
+    title: 'Personal Property Inventory Form',
+    description: 'Inventory personal property present in vehicle.',
+    fields: [
+      { name: 'jobNumber', label: 'Job Number', source: 'jobNumber' },
+      { name: 'inventoryDate', label: 'Inventory Date', type: 'date', source: 'towDate' },
+      { name: 'ownerName', label: 'Owner Name', source: 'customer.name' },
+      { name: 'vehicleDescription', label: 'Vehicle Description', source: 'vehicleDescription' },
+      { name: 'vin', label: 'VIN', source: 'vehicle.vin' },
+      { name: 'item1', label: 'Item 1' },
+      { name: 'item2', label: 'Item 2' },
+      { name: 'item3', label: 'Item 3' },
+      { name: 'item4', label: 'Item 4' },
+      { name: 'item5', label: 'Item 5' },
+      { name: 'storedBy', label: 'Stored By' },
+      { name: 'notes', label: 'Notes', type: 'textarea' }
+    ]
+  },
+  {
+    id: '10',
+    fileName: '10_Tow_Away_Zone_Signage_Spec_Sheet Final.pdf',
+    title: 'Tow Away Zone Signage Spec Sheet',
+    description: 'Capture signage details and compliance specs.',
+    fields: [
+      { name: 'inspectionDate', label: 'Inspection Date', type: 'date' },
+      { name: 'propertyName', label: 'Property Name' },
+      { name: 'propertyAddress', label: 'Property Address' },
+      { name: 'signCount', label: 'Total Sign Count' },
+      { name: 'signHeight', label: 'Sign Height' },
+      { name: 'signSize', label: 'Sign Size' },
+      { name: 'signPlacement', label: 'Sign Placement' },
+      { name: 'contactPhone', label: 'Contact Phone', source: 'customer.phone' },
+      { name: 'compliant', label: 'Compliant (Yes/No)' },
+      { name: 'notes', label: 'Notes', type: 'textarea' }
+    ]
+  },
+  {
+    id: '11',
+    fileName: '11_Certified_Mail_Lien_Notice_Tracking_Log Final.pdf',
+    title: 'Certified Mail & Lien Notice Tracking Log',
+    description: 'Track lien notice mailing and delivery status.',
+    fields: [
+      { name: 'jobNumber', label: 'Job Number', source: 'jobNumber' },
+      { name: 'mailDate', label: 'Mail Date', type: 'date' },
+      { name: 'ownerName', label: 'Owner Name', source: 'customer.name' },
+      { name: 'ownerAddress', label: 'Owner Address' },
+      { name: 'trackingNumber', label: 'Tracking Number' },
+      { name: 'mailCarrier', label: 'Carrier' },
+      { name: 'deliveryStatus', label: 'Delivery Status' },
+      { name: 'deliveryDate', label: 'Delivery Date', type: 'date' },
+      { name: 'notes', label: 'Notes', type: 'textarea' }
+    ]
+  },
+  {
+    id: '12',
+    fileName: '12_Storage_Daily_Charges_Ledger Final.pdf',
+    title: 'Storage Daily Charges Ledger',
+    description: 'Track vehicle storage charges over time.',
+    fields: [
+      { name: 'jobNumber', label: 'Job Number', source: 'jobNumber' },
+      { name: 'vehicleDescription', label: 'Vehicle Description', source: 'vehicleDescription' },
+      { name: 'storageStartDate', label: 'Storage Start Date', type: 'date', source: 'towDate' },
+      { name: 'dailyRate', label: 'Daily Rate' },
+      { name: 'daysStored', label: 'Days Stored' },
+      { name: 'lateFee', label: 'Late Fee' },
+      { name: 'otherCharges', label: 'Other Charges' },
+      { name: 'totalCharges', label: 'Total Charges' },
+      { name: 'paymentStatus', label: 'Payment Status' },
+      { name: 'notes', label: 'Notes', type: 'textarea' }
+    ]
+  }
+];
+
+let jobs = loadData(STORAGE_KEYS.jobs, []);
+let savedForms = loadData(STORAGE_KEYS.forms, []);
+let settings = loadData(STORAGE_KEYS.settings, DEFAULT_SETTINGS);
+
+let selectedJobId = null;
+let activeFormId = null;
+let editingSavedFormId = null;
+let currentFormValues = {};
+let currentCustomers = [];
+
+function loadData(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (_) {
+    return fallback;
+  }
+}
+
+function saveData(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function formatDateTime(value) {
+  if (!value) return 'N/A';
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? value : d.toLocaleString();
+}
+
+function formatDate(value) {
+  if (!value) return '';
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? value : d.toLocaleDateString();
+}
+
+function buildVehicleDescription(vehicle) {
+  return [vehicle.year, vehicle.make, vehicle.model, vehicle.color].filter(Boolean).join(' ');
+}
+
+function getNextJobNumber() {
+  const year = new Date().getFullYear();
+  const yearPrefix = `HWT-${year}-`;
+  const currentYearNumbers = jobs
+    .map((job) => job.jobNumber || '')
+    .filter((num) => num.startsWith(yearPrefix))
+    .map((num) => {
+      const parts = num.split('-');
+      return parts.length === 3 ? Number(parts[2]) : NaN;
+    })
+    .filter((n) => !Number.isNaN(n));
+  const next = currentYearNumbers.reduce((max, n) => (n > max ? n : max), 0) + 1;
+  return `${yearPrefix}${String(next).padStart(4, '0')}`;
+}
+
+function generateId() {
+  if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+    return window.crypto.randomUUID();
+  }
+  return `hwt-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function deepGet(obj, path) {
+  if (!path) return '';
+  return path.split('.').reduce((acc, key) => (acc && acc[key] != null ? acc[key] : ''), obj);
+}
+
+function getStatusClass(status) {
+  const normalized = String(status || '').toLowerCase();
+  if (normalized === 'completed') return 'completed';
+  if (normalized === 'pending') return 'pending';
+  return 'active';
+}
+
+function showNotice(message) {
+  const el = document.getElementById('notice');
+  el.textContent = message;
+  el.classList.remove('hidden');
+  clearTimeout(showNotice.timer);
+  showNotice.timer = setTimeout(() => el.classList.add('hidden'), NOTICE_DISPLAY_DURATION);
+}
+
+function renderBusinessInfo() {
+  document.getElementById('brandName').textContent = settings.name;
+  document.getElementById('brandMeta').innerHTML =
+    `${escapeHtml(settings.address)}<br>${escapeHtml(settings.phone)}<br>${escapeHtml(settings.email)}`;
+  document.getElementById('dashboardBusinessInfo').innerHTML =
+    `${escapeHtml(settings.name)}<br>${escapeHtml(settings.address)}<br>${escapeHtml(settings.phone)}<br>${escapeHtml(settings.email)}<br>${escapeHtml(settings.domain)}`;
+  document.getElementById('printBusinessInfo').innerHTML =
+    `${escapeHtml(settings.name)}<br>${escapeHtml(settings.address)}<br>${escapeHtml(settings.phone)} | ${escapeHtml(settings.email)}`;
+
+  const settingsForm = document.getElementById('settingsForm');
+  settingsForm.name.value = settings.name;
+  settingsForm.address.value = settings.address;
+  settingsForm.phone.value = settings.phone;
+  settingsForm.email.value = settings.email;
+  settingsForm.domain.value = settings.domain;
+}
+
+function renderDashboard() {
+  const activeJobs = jobs.filter((job) => job.status === 'Active').length;
+  const customersCount = buildCustomers().length;
+
+  document.getElementById('statTotalJobs').textContent = jobs.length;
+  document.getElementById('statActiveJobs').textContent = activeJobs;
+  document.getElementById('statForms').textContent = savedForms.length;
+  document.getElementById('statCustomers').textContent = customersCount;
+
+  const recent = [...jobs].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
+  const recentEl = document.getElementById('recentJobs');
+  recentEl.innerHTML = recent.length
+    ? recent.map((job) => `
+      <div class="list-item">
+        <div>
+          <strong>${escapeHtml(job.jobNumber)}</strong>
+          <div class="meta">${escapeHtml(formatDateTime(job.towDateTime))} • ${escapeHtml(job.customer.name || 'No name')} • ${escapeHtml(job.vehicleDescription || 'No vehicle')}</div>
+        </div>
+        <div><span class="pill ${getStatusClass(job.status)}">${escapeHtml(job.status)}</span></div>
+        <div><button class="secondary" data-open-job="${job.id}">Open</button></div>
+      </div>
+    `).join('')
+    : '<p class="muted">No jobs saved yet.</p>';
+}
+
+function renderJobs(search = '') {
+  const query = search.trim().toLowerCase();
+  const filtered = jobs.filter((job) => {
+    if (!query) return true;
+    const hay = [
+      job.jobNumber,
+      job.customer.name,
+      job.customer.phone,
+      job.vehicleDescription,
+      job.vehicle.make,
+      job.vehicle.model,
+      job.vehicle.plate
+    ].join(' ').toLowerCase();
+    return hay.includes(query);
+  });
+
+  const listEl = document.getElementById('jobsList');
+  listEl.innerHTML = filtered.length
+    ? filtered
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .map((job) => `
+      <div class="list-item">
+        <div>
+          <strong>${escapeHtml(job.jobNumber)}</strong>
+          <div class="meta">${escapeHtml(formatDateTime(job.towDateTime))} • ${escapeHtml(job.customer.name || 'No customer')} • ${escapeHtml(job.vehicleDescription || 'No vehicle')}</div>
+          <div class="meta">Type: ${escapeHtml(job.jobType)}</div>
+        </div>
+        <div>
+          <span class="pill ${getStatusClass(job.status)}">${escapeHtml(job.status)}</span>
+          <div style="margin-top:8px;">
+            <select data-status-job="${job.id}">
+              <option ${job.status === 'Active' ? 'selected' : ''}>Active</option>
+              <option ${job.status === 'Completed' ? 'selected' : ''}>Completed</option>
+              <option ${job.status === 'Pending' ? 'selected' : ''}>Pending</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <button class="secondary" data-view-job="${job.id}">View</button>
+        </div>
+      </div>
+    `).join('')
+    : '<p class="muted">No jobs match this search.</p>';
+}
+
+function renderJobDetails(job) {
+  const el = document.getElementById('jobDetails');
+  if (!job) {
+    el.textContent = 'Select a tow job to view full details.';
+    return;
+  }
+
+  selectedJobId = job.id;
+  el.innerHTML = `
+    <strong>${escapeHtml(job.jobNumber)}</strong><br>
+    <span class="pill ${getStatusClass(job.status)}">${escapeHtml(job.status)}</span><br><br>
+    <strong>Type:</strong> ${escapeHtml(job.jobType)}<br>
+    <strong>Tow Date & Time:</strong> ${escapeHtml(formatDateTime(job.towDateTime))}<br>
+    <strong>Pickup:</strong> ${escapeHtml(job.pickupLocation)}<br>
+    <strong>Drop-off:</strong> ${escapeHtml(job.dropoffLocation)}<br><br>
+    <strong>Customer:</strong> ${escapeHtml(job.customer.name || '')}<br>
+    <strong>Phone:</strong> ${escapeHtml(job.customer.phone || '')}<br>
+    <strong>Email:</strong> ${escapeHtml(job.customer.email || '')}<br>
+    <strong>Driver's License:</strong> ${escapeHtml(job.customer.license || '')}<br><br>
+    <strong>Vehicle:</strong> ${escapeHtml(job.vehicleDescription || '')}<br>
+    <strong>VIN:</strong> ${escapeHtml(job.vehicle.vin || '')}<br>
+    <strong>Plate:</strong> ${escapeHtml(job.vehicle.plate || '')} ${escapeHtml(job.vehicle.state || '')}<br><br>
+    <strong>Notes:</strong> ${escapeHtml(job.notes || 'N/A')}
+  `;
+}
+
+function buildCustomers() {
+  const map = new Map();
+  jobs.forEach((job) => {
+    const key = `${(job.customer.name || '').trim().toLowerCase()}|${(job.customer.phone || '').trim()}`;
+    if (!key || key === '|') return;
+    if (!map.has(key)) {
+      map.set(key, {
+        name: job.customer.name || 'Unknown',
+        phone: job.customer.phone || 'N/A',
+        email: job.customer.email || 'N/A',
+        jobs: []
+      });
+    }
+    map.get(key).jobs.push(job);
+  });
+  return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function renderCustomers() {
+  const customers = buildCustomers();
+  const listEl = document.getElementById('customersList');
+  listEl.innerHTML = customers.length
+    ? customers.map((customer, idx) => `
+      <div class="list-item">
+        <div>
+          <strong>${escapeHtml(customer.name)}</strong>
+          <div class="meta">${escapeHtml(customer.phone)} • ${escapeHtml(customer.email)}</div>
+          <div class="meta">${customer.jobs.length} job(s)</div>
+        </div>
+        <div></div>
+        <div><button class="secondary" data-customer-index="${idx}">View Jobs</button></div>
+      </div>
+    `).join('')
+    : '<p class="muted">No customers yet. Save a tow job to populate this list.</p>';
+
+  currentCustomers = customers;
+}
+
+function openCustomerJobs(index) {
+  const customer = currentCustomers[index];
+  const pane = document.getElementById('customerJobs');
+  if (!customer) {
+    pane.textContent = 'Select a customer to view all associated jobs.';
+    return;
+  }
+  pane.innerHTML = customer.jobs
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .map((job) => `<div style="margin-bottom:10px;"><strong>${escapeHtml(job.jobNumber)}</strong><br>${escapeHtml(formatDateTime(job.towDateTime))}<br>${escapeHtml(job.vehicleDescription || 'No vehicle')}<br><span class="pill ${getStatusClass(job.status)}">${escapeHtml(job.status)}</span></div>`)
+    .join('');
+}
+
+function renderFormCards() {
+  const cards = document.getElementById('formCards');
+  cards.innerHTML = FORM_DEFS.map((form) => `
+    <div class="card form-card">
+      <h3>📄 ${escapeHtml(form.id)}. ${escapeHtml(form.title)}</h3>
+      <p>${escapeHtml(form.description)}</p>
+      <small>${escapeHtml(form.fileName)}</small>
+      <div style="margin-top:10px;"><button class="secondary" data-open-form="${escapeHtml(form.id)}">Open Form</button></div>
+    </div>
+  `).join('');
+
+  const filter = document.getElementById('pdfFilterForm');
+  filter.innerHTML = '<option value="">All Form Types</option>' + FORM_DEFS.map((f) => `<option value="${escapeHtml(f.id)}">${escapeHtml(f.id)}. ${escapeHtml(f.title)}</option>`).join('');
+}
+
+function renderFormLinkedJobs(selected = '') {
+  const select = document.getElementById('formLinkedJob');
+  select.innerHTML = '<option value="">Not Linked</option>' +
+    jobs
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .map((job) => `<option value="${escapeHtml(job.id)}" ${selected === job.id ? 'selected' : ''}>${escapeHtml(job.jobNumber)} - ${escapeHtml(job.customer.name || 'No customer')}</option>`)
+      .join('');
+}
+
+function applyJobPrefill(values, formDef, job) {
+  if (!job) return values;
+  const updated = { ...values };
+  formDef.fields.forEach((field) => {
+    if (!field.source) return;
+    if (!updated[field.name]) {
+      updated[field.name] = deepGet(job, field.source) || '';
+    }
+  });
+  return updated;
+}
+
+function renderDynamicFormFields(formDef) {
+  const container = document.getElementById('dynamicFormFields');
+  container.innerHTML = formDef.fields.map((field) => {
+    const value = currentFormValues[field.name] || '';
+    if (field.type === 'textarea') {
+      return `<div class="full"><label>${escapeHtml(field.label)}</label><textarea data-field="${escapeHtml(field.name)}">${escapeHtml(value)}</textarea></div>`;
+    }
+    if (field.type === 'date') {
+      return `<div><label>${escapeHtml(field.label)}</label><input type="date" data-field="${escapeHtml(field.name)}" value="${escapeHtml(value)}" /></div>`;
+    }
+    return `<div><label>${escapeHtml(field.label)}</label><input type="text" data-field="${escapeHtml(field.name)}" value="${escapeHtml(value)}" /></div>`;
+  }).join('');
+
+  container.querySelectorAll('[data-field]').forEach((input) => {
+    input.addEventListener('input', (e) => {
+      currentFormValues[e.target.getAttribute('data-field')] = e.target.value;
+      renderPrintPreview(formDef);
+    });
+  });
+}
+
+function renderPrintPreview(formDef) {
+  const linkedJobId = document.getElementById('formLinkedJob').value;
+  const linkedJob = jobs.find((j) => j.id === linkedJobId);
+  document.getElementById('printFormTitle').textContent = formDef.title;
+  document.getElementById('printJobInfo').innerHTML = linkedJob
+    ? `Linked Job: ${escapeHtml(linkedJob.jobNumber)} • ${escapeHtml(linkedJob.customer.name || 'No customer')} • ${escapeHtml(formatDateTime(linkedJob.towDateTime))}`
+    : 'Linked Job: Not linked';
+
+  const printFields = document.getElementById('printFields');
+  printFields.innerHTML = formDef.fields.map((field) => `
+    <div class="print-field">
+      <strong>${field.label}</strong>
+      ${escapeHtml(currentFormValues[field.name] || '') || '&nbsp;'}
+    </div>
+  `).join('');
+}
+
+function openFormEditor(formId, savedFormId = null) {
+  const formDef = FORM_DEFS.find((f) => f.id === formId);
+  if (!formDef) return;
+
+  activeFormId = formId;
+  editingSavedFormId = savedFormId;
+
+  const saved = savedFormId ? savedForms.find((f) => f.id === savedFormId) : null;
+  currentFormValues = saved ? { ...saved.fields } : {};
+
+  document.getElementById('formEditorPanel').classList.remove('hidden');
+  document.getElementById('formEditorTitle').textContent = `${formDef.id}. ${formDef.title}`;
+
+  renderFormLinkedJobs(saved ? (saved.jobId || '') : (selectedJobId || ''));
+
+  const linkedJobId = document.getElementById('formLinkedJob').value;
+  const linkedJob = jobs.find((j) => j.id === linkedJobId);
+  currentFormValues = applyJobPrefill(currentFormValues, formDef, linkedJob);
+
+  renderDynamicFormFields(formDef);
+  renderPrintPreview(formDef);
+  document.getElementById('formSaveMessage').textContent = '';
+}
+
+function renderPdfFiles() {
+  const jobFilter = document.getElementById('pdfFilterJob').value.trim().toLowerCase();
+  const formFilter = document.getElementById('pdfFilterForm').value;
+
+  const filtered = savedForms.filter((entry) => {
+    const matchesJob = !jobFilter || (entry.jobNumber || '').toLowerCase().includes(jobFilter);
+    const matchesForm = !formFilter || entry.formId === formFilter;
+    return matchesJob && matchesForm;
+  });
+
+  const listEl = document.getElementById('pdfFilesList');
+  listEl.innerHTML = filtered.length
+    ? filtered
+        .sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt))
+        .map((entry) => `
+      <div class="list-item">
+        <div>
+          <strong>${escapeHtml(entry.formLabel)}</strong>
+          <div class="meta">Saved: ${escapeHtml(formatDateTime(entry.savedAt))}</div>
+          <div class="meta">Job: ${escapeHtml(entry.jobNumber || 'Not linked')}</div>
+        </div>
+        <div></div>
+        <div><button class="secondary" data-reopen-form="${entry.id}">Reopen</button></div>
+      </div>
+    `).join('')
+    : '<p class="muted">No saved form records match this filter.</p>';
+}
+
+function reopenSavedForm(savedId) {
+  const entry = savedForms.find((f) => f.id === savedId);
+  if (!entry) return;
+  showSection('forms');
+  openFormEditor(entry.formId, savedId);
+}
+
+function showSection(id) {
+  document.querySelectorAll('.app-section').forEach((section) => {
+    section.classList.toggle('active', section.id === id);
+  });
+  document.querySelectorAll('.nav a').forEach((link) => {
+    link.classList.toggle('active', link.getAttribute('data-section') === id);
+  });
+
+  const titles = {
+    dashboard: ['Operations Dashboard', 'Track jobs, complete forms, and keep records organized.'],
+    'tow-jobs': ['Tow Jobs', 'Create, search, and update tow jobs.'],
+    forms: ['Forms', 'Complete and print all business forms.'],
+    customers: ['Customers', 'View unique customers and their job history.'],
+    'pdf-files': ['PDF Files', 'Review and reopen saved form records.'],
+    settings: ['Settings', 'Manage Home Wrecker Towing LLC business info.']
+  };
+  document.getElementById('sectionTitle').textContent = titles[id][0];
+  document.getElementById('sectionSubtitle').textContent = titles[id][1];
+}
+
+function openNewJobForm() {
+  showSection('tow-jobs');
+  document.getElementById('newJobPanel').classList.remove('hidden');
+}
+
+function closeNewJobForm() {
+  document.getElementById('newJobPanel').classList.add('hidden');
+  document.getElementById('newJobForm').reset();
+}
+
+function selectJob(jobId) {
+  const job = jobs.find((j) => j.id === jobId);
+  renderJobDetails(job || null);
+}
+
+function updateJobStatus(jobId, status) {
+  const job = jobs.find((j) => j.id === jobId);
+  if (!job) return;
+  job.status = status;
+  saveData(STORAGE_KEYS.jobs, jobs);
+  renderAll();
+}
+
+function openJobFromDashboard(jobId) {
+  showSection('tow-jobs');
+  selectJob(jobId);
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function renderAll() {
+  renderBusinessInfo();
+  renderDashboard();
+  renderJobs(document.getElementById('jobSearch').value || '');
+  renderCustomers();
+  renderFormCards();
+  renderPdfFiles();
+}
+
+function initEvents() {
+  document.querySelectorAll('.nav a').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSection(link.getAttribute('data-section'));
+    });
+  });
+
+  document.getElementById('topNewTowBtn').addEventListener('click', openNewJobForm);
+  document.getElementById('dashboardNewTow').addEventListener('click', openNewJobForm);
+  document.getElementById('openNewJobFormBtn').addEventListener('click', openNewJobForm);
+  document.getElementById('topOpenFormsBtn').addEventListener('click', () => showSection('forms'));
+  document.getElementById('dashboardOpenForms').addEventListener('click', () => showSection('forms'));
+  document.getElementById('topSearchJobsBtn').addEventListener('click', () => {
+    showSection('tow-jobs');
+    document.getElementById('jobSearch').focus();
+  });
+
+  document.getElementById('cancelNewJob').addEventListener('click', closeNewJobForm);
+
+  document.getElementById('newJobForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const towDateTime = form.towDateTime.value;
+    const vehicle = {
+      year: form.vehicleYear.value.trim(),
+      make: form.vehicleMake.value.trim(),
+      model: form.vehicleModel.value.trim(),
+      color: form.vehicleColor.value.trim(),
+      vin: form.vehicleVin.value.trim(),
+      plate: form.vehiclePlate.value.trim(),
+      state: form.vehicleState.value.trim()
+    };
+
+    const job = {
+      id: generateId(),
+      jobNumber: getNextJobNumber(),
+      jobType: form.jobType.value,
+      towDateTime,
+      towDate: towDateTime ? towDateTime.slice(0, 10) : '',
+      towTime: towDateTime ? towDateTime.slice(11, 16) : '',
+      pickupLocation: form.pickupLocation.value.trim(),
+      dropoffLocation: form.dropoffLocation.value.trim(),
+      customer: {
+        name: form.customerName.value.trim(),
+        phone: form.customerPhone.value.trim(),
+        email: form.customerEmail.value.trim(),
+        license: form.customerLicense.value.trim()
+      },
+      vehicle,
+      vehicleDescription: buildVehicleDescription(vehicle),
+      notes: form.notes.value.trim(),
+      status: form.status.value,
+      createdAt: new Date().toISOString()
+    };
+
+    jobs.push(job);
+    saveData(STORAGE_KEYS.jobs, jobs);
+
+    closeNewJobForm();
+    renderAll();
+    selectJob(job.id);
+    showNotice(`Tow job saved: ${job.jobNumber}`);
+  });
+
+  document.getElementById('jobSearch').addEventListener('input', (e) => renderJobs(e.target.value));
+  document.getElementById('jobSearchClear').addEventListener('click', () => {
+    document.getElementById('jobSearch').value = '';
+    renderJobs('');
+  });
+
+  document.getElementById('formLinkedJob').addEventListener('change', (e) => {
+    const formDef = FORM_DEFS.find((f) => f.id === activeFormId);
+    if (!formDef) return;
+    const linked = jobs.find((j) => j.id === e.target.value);
+    currentFormValues = applyJobPrefill(currentFormValues, formDef, linked);
+    renderDynamicFormFields(formDef);
+    renderPrintPreview(formDef);
+  });
+
+  document.getElementById('saveFormBtn').addEventListener('click', () => {
+    const formDef = FORM_DEFS.find((f) => f.id === activeFormId);
+    if (!formDef) return;
+
+    const linkedJobId = document.getElementById('formLinkedJob').value;
+    const linkedJob = jobs.find((j) => j.id === linkedJobId);
+
+    const payload = {
+      id: editingSavedFormId || generateId(),
+      formId: formDef.id,
+      formLabel: `${formDef.id}. ${formDef.title}`,
+      jobId: linkedJobId || '',
+      jobNumber: linkedJob ? linkedJob.jobNumber : '',
+      fields: { ...currentFormValues },
+      savedAt: new Date().toISOString()
+    };
+
+    if (editingSavedFormId) {
+      const idx = savedForms.findIndex((f) => f.id === editingSavedFormId);
+      if (idx >= 0) savedForms[idx] = payload;
+    } else {
+      savedForms.push(payload);
+      editingSavedFormId = payload.id;
+    }
+
+    saveData(STORAGE_KEYS.forms, savedForms);
+    renderAll();
+    document.getElementById('formSaveMessage').textContent = `Saved ${payload.formLabel} at ${formatDateTime(payload.savedAt)}.`;
+  });
+
+  document.getElementById('printFormBtn').addEventListener('click', () => {
+    const formDef = FORM_DEFS.find((f) => f.id === activeFormId);
+    if (!formDef) return;
+    renderPrintPreview(formDef);
+    document.body.classList.add('print-form');
+    window.print();
+    setTimeout(() => document.body.classList.remove('print-form'), PRINT_CLEANUP_DELAY);
+  });
+
+  window.addEventListener('afterprint', () => document.body.classList.remove('print-form'));
+
+  document.getElementById('closeFormEditor').addEventListener('click', () => {
+    document.getElementById('formEditorPanel').classList.add('hidden');
+    activeFormId = null;
+    editingSavedFormId = null;
+    currentFormValues = {};
+    document.getElementById('formSaveMessage').textContent = '';
+  });
+
+  document.getElementById('pdfFilterJob').addEventListener('input', renderPdfFiles);
+  document.getElementById('pdfFilterForm').addEventListener('change', renderPdfFiles);
+
+  document.getElementById('recentJobs').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-open-job]');
+    if (!btn) return;
+    openJobFromDashboard(btn.getAttribute('data-open-job'));
+  });
+
+  document.getElementById('jobsList').addEventListener('click', (e) => {
+    const viewBtn = e.target.closest('[data-view-job]');
+    if (viewBtn) {
+      selectJob(viewBtn.getAttribute('data-view-job'));
+    }
+  });
+
+  document.getElementById('jobsList').addEventListener('change', (e) => {
+    const statusSelect = e.target.closest('[data-status-job]');
+    if (!statusSelect) return;
+    updateJobStatus(statusSelect.getAttribute('data-status-job'), statusSelect.value);
+  });
+
+  document.getElementById('customersList').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-customer-index]');
+    if (!btn) return;
+    openCustomerJobs(Number(btn.getAttribute('data-customer-index')));
+  });
+
+  document.getElementById('formCards').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-open-form]');
+    if (!btn) return;
+    openFormEditor(btn.getAttribute('data-open-form'));
+  });
+
+  document.getElementById('pdfFilesList').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-reopen-form]');
+    if (!btn) return;
+    reopenSavedForm(btn.getAttribute('data-reopen-form'));
+  });
+
+  document.getElementById('settingsForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const form = e.target;
+    settings = {
+      name: form.name.value.trim(),
+      address: form.address.value.trim(),
+      phone: form.phone.value.trim(),
+      email: form.email.value.trim(),
+      domain: form.domain.value.trim()
+    };
+    saveData(STORAGE_KEYS.settings, settings);
+    renderBusinessInfo();
+    showNotice('Business settings saved.');
+  });
+}
+
+initEvents();
+renderAll();
+</script>
 </body>
 </html>
