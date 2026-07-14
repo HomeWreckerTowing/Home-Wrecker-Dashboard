@@ -402,6 +402,8 @@ const STORAGE_KEYS = {
   forms: 'hwt_saved_forms',
   settings: 'hwt_settings'
 };
+const NOTICE_DISPLAY_DURATION = 2600;
+const PRINT_CLEANUP_DELAY = 300;
 
 const DEFAULT_SETTINGS = {
   name: 'Home Wrecker Towing LLC',
@@ -718,7 +720,7 @@ function showNotice(message) {
   el.textContent = message;
   el.classList.remove('hidden');
   clearTimeout(showNotice.timer);
-  showNotice.timer = setTimeout(() => el.classList.add('hidden'), 2600);
+  showNotice.timer = setTimeout(() => el.classList.add('hidden'), NOTICE_DISPLAY_DURATION);
 }
 
 function renderBusinessInfo() {
@@ -1200,7 +1202,7 @@ function initEvents() {
     renderPrintPreview(formDef);
     document.body.classList.add('print-form');
     window.print();
-    setTimeout(() => document.body.classList.remove('print-form'), 300);
+    setTimeout(() => document.body.classList.remove('print-form'), PRINT_CLEANUP_DELAY);
   });
 
   window.addEventListener('afterprint', () => document.body.classList.remove('print-form'));
