@@ -134,6 +134,17 @@ textarea { min-height: 90px; resize: vertical; }
 
 .muted { color: var(--muted); }
 .hidden { display: none !important; }
+.notice {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  background: #104447;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  z-index: 1000;
+}
 
 .printable-form {
   margin-top: 14px;
@@ -383,6 +394,7 @@ textarea { min-height: 90px; resize: vertical; }
     </section>
   </main>
 </div>
+<div id="notice" class="notice hidden" role="status" aria-live="polite"></div>
 
 <script>
 const STORAGE_KEYS = {
@@ -636,7 +648,7 @@ let selectedJobId = null;
 let activeFormId = null;
 let editingSavedFormId = null;
 let currentFormValues = {};
-let customersCache = [];
+let currentCustomers = [];
 
 function loadData(key, fallback) {
   try {
@@ -696,6 +708,14 @@ function getStatusClass(status) {
   if (normalized === 'completed') return 'completed';
   if (normalized === 'pending') return 'pending';
   return 'active';
+}
+
+function showNotice(message) {
+  const el = document.getElementById('notice');
+  el.textContent = message;
+  el.classList.remove('hidden');
+  clearTimeout(showNotice.timer);
+  showNotice.timer = setTimeout(() => el.classList.add('hidden'), 2600);
 }
 
 function renderBusinessInfo() {
@@ -846,11 +866,11 @@ function renderCustomers() {
     `).join('')
     : '<p class="muted">No customers yet. Save a tow job to populate this list.</p>';
 
-  customersCache = customers;
+  currentCustomers = customers;
 }
 
 function openCustomerJobs(index) {
-  const customer = customersCache[index];
+  const customer = currentCustomers[index];
   const pane = document.getElementById('customerJobs');
   if (!customer) {
     pane.textContent = 'Select a customer to view all associated jobs.';
@@ -1123,7 +1143,7 @@ function initEvents() {
     closeNewJobForm();
     renderAll();
     selectJob(job.id);
-    alert(`Tow job saved successfully. Job Number: ${job.jobNumber}`);
+    showNotice(`Tow job saved: ${job.jobNumber}`);
   });
 
   document.getElementById('jobSearch').addEventListener('input', (e) => renderJobs(e.target.value));
@@ -1242,7 +1262,7 @@ function initEvents() {
     };
     saveData(STORAGE_KEYS.settings, settings);
     renderBusinessInfo();
-    alert('Business settings saved.');
+    showNotice('Business settings saved.');
   });
 }
 
