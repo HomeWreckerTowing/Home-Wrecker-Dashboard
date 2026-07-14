@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Home Wrecker Towing Dashboard</title>
+<style>
+:root {
+--bg: #f5f3ee;
+--surface: #ffffff;
+--surface-2: #ece8df;
+--text: #22211d;
+--muted: #6f6a61;
+--border: #d7d2c7;
+--primary: #0c6a6f;
+--primary-dark: #094e52;
+--success: #3c7a35;
+--radius: 18px;
+--shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+}
+
+body {
+font-family: Arial, sans-serif;
+background: var(--bg);
+color: var(--text);
+}
+
+.app {
+display: grid;
+grid-template-columns: 260px 1fr;
+min-height: 100vh;
+}
+
+.sidebar {
+background: var(--surface);
+border-right: 1px solid var(--border);
+padding: 24px;
+}
+
+.brand {
+font-size: 24px;
+font-weight: bold;
+color: var(--primary);
+margin-bottom: 32px;
+line-height: 1.2;
+}
+
+.nav a {
+display: block;
+text-decoration: none;
+color: var(--text);
+padding: 12px 14px;
+border-radius: 12px;
+margin-bottom: 8px;
+background: transparent;
+}
+
+.nav a:hover,
+.nav a.active {
+background: var(--surface-2);
+color: var(--primary-dark);
+}
+
+.main {
+padding: 24px;
+}
+
+.topbar {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 16px;
+margin-bottom: 24px;
+flex-wrap: wrap;
+}
+
+.topbar h1 {
+font-size: 30px;
+}
+
+.topbar p {
+color: var(--muted);
+margin-top: 6px;
+}
+
+.quick-btn {
+background: var(--primary);
+color: white;
+border: none;
+border-radius: 12px;
+padding: 12px 18px;
+font-size: 15px;
+cursor: pointer;
+}
+
+.quick-btn:hover {
+background: var(--primary-dark);
+}
+
+.grid {
+display: grid;
+grid-template-columns: repeat(2, minmax(0, 1fr));
+gap: 20px;
+}
+
+.card {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: var(--radius);
+box-shadow: var(--shadow);
+padding: 22px;
+}
+
+.card h2 {
+font-size: 20px;
+margin-bottom: 10px;
+}
+
+.card p {
+color: var(--muted);
+line-height: 1.6;
+margin-bottom: 14px;
+}
+
+.pill {
+display: inline-block;
+background: #e3f1ee;
+color: var(--success);
+padding: 7px 12px;
+border-radius: 999px;
+font-size: 14px;
+font-weight: bold;
+}
+
+@media (max-width: 900px) {
+.app {
+grid-template-columns: 1fr;
+}
+
+.sidebar {
+border-right: none;
+border-bottom: 1px solid var(--border);
+}
+
+.grid {
+grid-template-columns: 1fr;
+}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+<div class="brand">Home Wrecker<br>Towing</div>
+
+<nav class="nav">
+<a href="#" class="active">Dashboard</a>
+<a href="#">Tow Jobs</a>
+<a href="#">Forms</a>
+<a href="#">Customers</a>
+<a href="#">PDF Files</a>
+<a href="#">Settings</a>
+</nav>
+</aside>
+
+<main class="main">
+<div class="topbar">
+<div>
+<h1>Operations Dashboard</h1>
+<p>Track jobs, open forms, and save paperwork faster.</p>
+</div>
+
+<button class="quick-btn">+ New Tow Job</button>
+</div>
+
+<section class="grid">
+<div class="card">
+<h2>Today's Jobs</h2>
+<p>See active calls, scheduled pickups, and completed work for the day.</p>
+<span class="pill">3 active jobs</span>
+</div>
+
+<div class="card">
+<h2>Open Forms</h2>
+<p>Continue tow authorizations, release forms, and other unfinished paperwork.</p>
+<span class="pill">5 forms in progress</span>
+</div>
+
+<div class="card">
+<h2>Recent PDFs</h2>
+<p>Open saved paperwork, print copies, and keep job records organized.</p>
+<span class="pill">12 recent files</span>
+</div>
+
+<div class="card">
+<h2>Quick Actions</h2>
+<p>Start a new tow ticket, look up a customer, or prepare a PDF packet.</p>
+<span class="pill">Ready to use</span>
+</div>
+</section>
+</main>
+</div>
+</body>
+</html>
