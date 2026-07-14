@@ -869,12 +869,12 @@ function renderFormCards() {
       <h3>📄 ${escapeHtml(form.id)}. ${escapeHtml(form.title)}</h3>
       <p>${escapeHtml(form.description)}</p>
       <small>${escapeHtml(form.fileName)}</small>
-      <div style="margin-top:10px;"><button class="secondary" data-open-form="${form.id}">Open Form</button></div>
+      <div style="margin-top:10px;"><button class="secondary" data-open-form="${escapeHtml(form.id)}">Open Form</button></div>
     </div>
   `).join('');
 
   const filter = document.getElementById('pdfFilterForm');
-  filter.innerHTML = '<option value="">All Form Types</option>' + FORM_DEFS.map((f) => `<option value="${f.id}">${f.id}. ${f.title}</option>`).join('');
+  filter.innerHTML = '<option value="">All Form Types</option>' + FORM_DEFS.map((f) => `<option value="${escapeHtml(f.id)}">${escapeHtml(f.id)}. ${escapeHtml(f.title)}</option>`).join('');
 }
 
 function renderFormLinkedJobs(selected = '') {
@@ -882,7 +882,7 @@ function renderFormLinkedJobs(selected = '') {
   select.innerHTML = '<option value="">Not Linked</option>' +
     jobs
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .map((job) => `<option value="${job.id}" ${selected === job.id ? 'selected' : ''}>${escapeHtml(job.jobNumber)} - ${escapeHtml(job.customer.name || 'No customer')}</option>`)
+      .map((job) => `<option value="${escapeHtml(job.id)}" ${selected === job.id ? 'selected' : ''}>${escapeHtml(job.jobNumber)} - ${escapeHtml(job.customer.name || 'No customer')}</option>`)
       .join('');
 }
 
@@ -903,12 +903,12 @@ function renderDynamicFormFields(formDef) {
   container.innerHTML = formDef.fields.map((field) => {
     const value = currentFormValues[field.name] || '';
     if (field.type === 'textarea') {
-      return `<div class="full"><label>${field.label}</label><textarea data-field="${field.name}">${escapeHtml(value)}</textarea></div>`;
+      return `<div class="full"><label>${escapeHtml(field.label)}</label><textarea data-field="${escapeHtml(field.name)}">${escapeHtml(value)}</textarea></div>`;
     }
     if (field.type === 'date') {
-      return `<div><label>${field.label}</label><input type="date" data-field="${field.name}" value="${escapeHtml(value)}" /></div>`;
+      return `<div><label>${escapeHtml(field.label)}</label><input type="date" data-field="${escapeHtml(field.name)}" value="${escapeHtml(value)}" /></div>`;
     }
-    return `<div><label>${field.label}</label><input type="text" data-field="${field.name}" value="${escapeHtml(value)}" /></div>`;
+    return `<div><label>${escapeHtml(field.label)}</label><input type="text" data-field="${escapeHtml(field.name)}" value="${escapeHtml(value)}" /></div>`;
   }).join('');
 
   container.querySelectorAll('[data-field]').forEach((input) => {
