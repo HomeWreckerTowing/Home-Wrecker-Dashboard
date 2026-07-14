@@ -636,6 +636,7 @@ let selectedJobId = null;
 let activeFormId = null;
 let editingSavedFormId = null;
 let currentFormValues = {};
+let customersCache = [];
 
 function loadData(key, fallback) {
   try {
@@ -674,8 +675,15 @@ function getNextJobNumber() {
     .filter((num) => num.startsWith(yearPrefix))
     .map((num) => Number(num.split('-')[2]))
     .filter((n) => !Number.isNaN(n));
-  const next = (currentYearNumbers.length ? Math.max(...currentYearNumbers) : 0) + 1;
+  const next = currentYearNumbers.reduce((max, n) => (n > max ? n : max), 0) + 1;
   return `${yearPrefix}${String(next).padStart(4, '0')}`;
+}
+
+function generateId() {
+  if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+    return window.crypto.randomUUID();
+  }
+  return `hwt-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 function deepGet(obj, path) {
@@ -726,7 +734,7 @@ function renderDashboard() {
           <div class="meta">${escapeHtml(formatDateTime(job.towDateTime))} • ${escapeHtml(job.customer.name || 'No name')} • ${escapeHtml(job.vehicleDescription || 'No vehicle')}</div>
         </div>
         <div><span class="pill ${getStatusClass(job.status)}">${escapeHtml(job.status)}</span></div>
-        <div><button class="secondary" onclick="openJobFromDashboard('${job.id}')">Open</button></div>
+        <div><button class="secondary" data-open-job="${job.id}">Open</button></div>
       </div>
     `).join('')
     : '<p class="muted">No jobs saved yet.</p>';
@@ -762,7 +770,7 @@ function renderJobs(search = '') {
         <div>
           <span class="pill ${getStatusClass(job.status)}">${escapeHtml(job.status)}</span>
           <div style="margin-top:8px;">
-            <select onchange="updateJobStatus('${job.id}', this.value)">
+            <select data-status-job="${job.id}">
               <option ${job.status === 'Active' ? 'selected' : ''}>Active</option>
               <option ${job.status === 'Completed' ? 'selected' : ''}>Completed</option>
               <option ${job.status === 'Pending' ? 'selected' : ''}>Pending</option>
@@ -770,7 +778,7 @@ function renderJobs(search = '') {
           </div>
         </div>
         <div>
-          <button class="secondary" onclick="selectJob('${job.id}')">View</button>
+          <button class="secondary" data-view-job="${job.id}">View</button>
         </div>
       </div>
     `).join('')
@@ -833,16 +841,16 @@ function renderCustomers() {
           <div class="meta">${customer.jobs.length} job(s)</div>
         </div>
         <div></div>
-        <div><button class="secondary" onclick="openCustomerJobs(${idx})">View Jobs</button></div>
+        <div><button class="secondary" data-customer-index="${idx}">View Jobs</button></div>
       </div>
     `).join('')
     : '<p class="muted">No customers yet. Save a tow job to populate this list.</p>';
 
-  window.__customersCache = customers;
+  customersCache = customers;
 }
 
 function openCustomerJobs(index) {
-  const customer = (window.__customersCache || [])[index];
+  const customer = customersCache[index];
   const pane = document.getElementById('customerJobs');
   if (!customer) {
     pane.textContent = 'Select a customer to view all associated jobs.';
@@ -857,10 +865,11 @@ function openCustomerJobs(index) {
 function renderFormCards() {
   const cards = document.getElementById('formCards');
   cards.innerHTML = FORM_DEFS.map((form) => `
-    <div class="card form-card" onclick="openFormEditor('${form.id}')">
+    <div class="card form-card">
       <h3>📄 ${escapeHtml(form.id)}. ${escapeHtml(form.title)}</h3>
       <p>${escapeHtml(form.description)}</p>
       <small>${escapeHtml(form.fileName)}</small>
+      <div style="margin-top:10px;"><button class="secondary" data-open-form="${form.id}">Open Form</button></div>
     </div>
   `).join('');
 
@@ -973,7 +982,7 @@ function renderPdfFiles() {
           <div class="meta">Job: ${escapeHtml(entry.jobNumber || 'Not linked')}</div>
         </div>
         <div></div>
-        <div><button class="secondary" onclick="reopenSavedForm('${entry.id}')">Reopen</button></div>
+        <div><button class="secondary" data-reopen-form="${entry.id}">Reopen</button></div>
       </div>
     `).join('')
     : '<p class="muted">No saved form records match this filter.</p>';
@@ -1087,7 +1096,7 @@ function initEvents() {
     };
 
     const job = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       jobNumber: getNextJobNumber(),
       jobType: form.jobType.value,
       towDateTime,
@@ -1140,7 +1149,7 @@ function initEvents() {
     const linkedJob = jobs.find((j) => j.id === linkedJobId);
 
     const payload = {
-      id: editingSavedFormId || crypto.randomUUID(),
+      id: editingSavedFormId || generateId(),
       formId: formDef.id,
       formLabel: `${formDef.id}. ${formDef.title}`,
       jobId: linkedJobId || '',
@@ -1183,6 +1192,43 @@ function initEvents() {
 
   document.getElementById('pdfFilterJob').addEventListener('input', renderPdfFiles);
   document.getElementById('pdfFilterForm').addEventListener('change', renderPdfFiles);
+
+  document.getElementById('recentJobs').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-open-job]');
+    if (!btn) return;
+    openJobFromDashboard(btn.getAttribute('data-open-job'));
+  });
+
+  document.getElementById('jobsList').addEventListener('click', (e) => {
+    const viewBtn = e.target.closest('[data-view-job]');
+    if (viewBtn) {
+      selectJob(viewBtn.getAttribute('data-view-job'));
+    }
+  });
+
+  document.getElementById('jobsList').addEventListener('change', (e) => {
+    const statusSelect = e.target.closest('[data-status-job]');
+    if (!statusSelect) return;
+    updateJobStatus(statusSelect.getAttribute('data-status-job'), statusSelect.value);
+  });
+
+  document.getElementById('customersList').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-customer-index]');
+    if (!btn) return;
+    openCustomerJobs(Number(btn.getAttribute('data-customer-index')));
+  });
+
+  document.getElementById('formCards').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-open-form]');
+    if (!btn) return;
+    openFormEditor(btn.getAttribute('data-open-form'));
+  });
+
+  document.getElementById('pdfFilesList').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-reopen-form]');
+    if (!btn) return;
+    reopenSavedForm(btn.getAttribute('data-reopen-form'));
+  });
 
   document.getElementById('settingsForm').addEventListener('submit', (e) => {
     e.preventDefault();
