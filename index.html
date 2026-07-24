@@ -413,6 +413,21 @@ const DEFAULT_SETTINGS = {
   domain: 'homewreckertowing.org'
 };
 
+const PDFFILLER_LINKS = {
+  '01': 'https://pdf.ac/0BDUM8fy',
+  '02': 'https://pdf.ac/wjA_SpG9',
+  '03': 'https://pdf.ac/YaTyRoNAj',
+  '04': 'https://pdf.ac/-XQdhTjvj6',
+  '05': 'https://pdf.ac/mhNh4fm8b',
+  '06': 'https://pdf.ac/bCPhoOS_D8',
+  '07': 'https://pdf.ac/OdTisnRkQ',
+  '08': 'https://pdf.ac/sw1c2w8mW',
+  '09': 'https://pdf.ac/yHlyoxX1G',
+  '10': 'https://pdf.ac/WWZeUHbl',
+  '11': 'https://pdf.ac/1AYvcU0ZiG',
+  '12': 'https://pdf.ac/eIygmQFo'
+};
+
 const FORM_DEFS = [
   {
     id: '01',
@@ -894,7 +909,10 @@ function renderFormCards() {
       <h3>📄 ${escapeHtml(form.id)}. ${escapeHtml(form.title)}</h3>
       <p>${escapeHtml(form.description)}</p>
       <small>${escapeHtml(form.fileName)}</small>
-      <div style="margin-top:10px;"><button class="secondary" data-open-form="${escapeHtml(form.id)}">Open Form</button></div>
+      <div style="margin-top:10px;">${PDFFILLER_LINKS[form.id]
+        ? `<a class="secondary" href="${escapeHtml(PDFFILLER_LINKS[form.id])}" target="_blank" rel="noopener noreferrer">Open Form</a>`
+        : `<button class="secondary" data-open-form="${escapeHtml(form.id)}">Open Form</button>`}
+      </div>
     </div>
   `).join('');
 
@@ -1246,6 +1264,7 @@ function initEvents() {
   document.getElementById('formCards').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-open-form]');
     if (!btn) return;
+    if (PDFFILLER_LINKS[btn.getAttribute('data-open-form')]) return;
     openFormEditor(btn.getAttribute('data-open-form'));
   });
 
