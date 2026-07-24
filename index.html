@@ -402,6 +402,21 @@ const STORAGE_KEYS = {
   forms: 'hwt_saved_forms',
   settings: 'hwt_settings'
 };
+const EXTERNAL_ONLY_FORM_IDS = new Set(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']);
+const PDFFILLER_LINKS = {
+  '01': 'https://pdf.ac/0BDUM8fy',
+  '02': 'https://pdf.ac/wjA_SpG9',
+  '03': 'https://pdf.ac/YaTyRoNAj',
+  '04': 'https://pdf.ac/-XQdhTjvj6',
+  '05': 'https://pdf.ac/mhNh4fm8b',
+  '06': 'https://pdf.ac/bCPhoOS_D8',
+  '07': 'https://pdf.ac/OdTisnRkQ',
+  '08': 'https://pdf.ac/sw1c2w8mW',
+  '09': 'https://pdf.ac/yHlyoxX1G',
+  '10': 'https://pdf.ac/WWZeUHbl',
+  '11': 'https://pdf.ac/1AYvcU0ZiG',
+  '12': 'https://pdf.ac/eIygmQFo'
+};
 const NOTICE_DISPLAY_DURATION = 2600;
 const PRINT_CLEANUP_DELAY = 300;
 
@@ -887,6 +902,10 @@ function openCustomerJobs(index) {
     .join('');
 }
 
+function isExternalOnlyForm(formId) {
+  return EXTERNAL_ONLY_FORM_IDS.has(String(formId || ''));
+}
+
 function renderFormCards() {
   const cards = document.getElementById('formCards');
   cards.innerHTML = FORM_DEFS.map((form) => `
@@ -894,7 +913,9 @@ function renderFormCards() {
       <h3>📄 ${escapeHtml(form.id)}. ${escapeHtml(form.title)}</h3>
       <p>${escapeHtml(form.description)}</p>
       <small>${escapeHtml(form.fileName)}</small>
-      <div style="margin-top:10px;"><button class="secondary" data-open-form="${escapeHtml(form.id)}">Open Form</button></div>
+      <div style="margin-top:10px;">${isExternalOnlyForm(form.id)
+        ? `<a class="btn secondary" data-external-form="${escapeHtml(form.id)}" href="${escapeHtml(PDFFILLER_LINKS[form.id])}" target="_blank" rel="noopener noreferrer">Open Form</a>`
+        : `<button class="secondary" data-open-form="${escapeHtml(form.id)}">Open Form</button>`}</div>
     </div>
   `).join('');
 
@@ -962,6 +983,7 @@ function renderPrintPreview(formDef) {
 }
 
 function openFormEditor(formId, savedFormId = null) {
+  if (isExternalOnlyForm(formId)) return;
   const formDef = FORM_DEFS.find((f) => f.id === formId);
   if (!formDef) return;
 
@@ -1167,6 +1189,10 @@ function initEvents() {
   });
 
   document.getElementById('saveFormBtn').addEventListener('click', () => {
+    if (isExternalOnlyForm(activeFormId)) {
+      document.getElementById('formSaveMessage').textContent = '';
+      return;
+    }
     const formDef = FORM_DEFS.find((f) => f.id === activeFormId);
     if (!formDef) return;
 
@@ -1244,9 +1270,12 @@ function initEvents() {
   });
 
   document.getElementById('formCards').addEventListener('click', (e) => {
+    if (e.target.closest('[data-external-form]')) return;
     const btn = e.target.closest('[data-open-form]');
     if (!btn) return;
-    openFormEditor(btn.getAttribute('data-open-form'));
+    const formId = btn.getAttribute('data-open-form');
+    if (isExternalOnlyForm(formId)) return;
+    openFormEditor(formId);
   });
 
   document.getElementById('pdfFilesList').addEventListener('click', (e) => {
